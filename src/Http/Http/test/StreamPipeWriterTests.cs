@@ -316,6 +316,30 @@ namespace System.IO.Pipelines.Tests
             Assert.Equal(expectedString, ReadAsString());
         }
 
+        [Fact]
+        public void GetMemorySlicesCorrectly()
+        {
+            var expectedString = "abcdef";
+            var memory = Writer.GetMemory();
+
+            Encoding.ASCII.GetBytes(expectedString).CopyTo(memory);
+            Writer.Advance(3);
+            memory = Writer.GetMemory();
+            Assert.Equal(Encoding.ASCII.GetBytes("def"), memory.Slice(0, 3).ToArray());
+        }
+
+        [Fact]
+        public void GetSpanSlicesCorrectly()
+        {
+            var expectedString = "abcdef";
+            var span = Writer.GetSpan();
+
+            Encoding.ASCII.GetBytes(expectedString).CopyTo(span);
+            Writer.Advance(3);
+            span = Writer.GetSpan();
+            Assert.Equal(Encoding.ASCII.GetBytes("def"), span.Slice(0, 3).ToArray());
+        }
+
         private void WriteStringToStream(string input)
         {
             var buffer = Encoding.ASCII.GetBytes(input);
