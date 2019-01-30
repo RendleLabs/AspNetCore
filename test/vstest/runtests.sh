@@ -5,7 +5,7 @@ if [ $? -ne 0 ]; then
     while [ $download_retries -gt 0 ]; do
         curl -sSL https://dot.net/v1/dotnet-install.sh
         if [ $? -ne 0 ]; then
-            let install_retries=install_retries-1
+            let download_retries=download_retries-1
             echo -e "${YELLOW}Failed to download dotnet-install.sh. Retries left: $download_retries.${RESET}"
         else
             download_retries=0
