@@ -65,7 +65,6 @@ namespace Microsoft.AspNetCore.ApiAuthorization.IdentityServer
 
         [ConditionalFact]
         [SkipOnHelix] // https://github.com/aspnet/AspNetCore/issues/6720
-        [OSSkipCondition(OperatingSystems.MacOSX)]
         public void Configure_LoadsPfxCertificateCredentialFromConfiguration()
         {
             // Arrange
@@ -95,7 +94,7 @@ namespace Microsoft.AspNetCore.ApiAuthorization.IdentityServer
         }
 
         [ConditionalFact]
-        [OSSkipCondition(OperatingSystems.MacOSX)]
+        [SkipOnHelix] // https://github.com/aspnet/AspNetCore/issues/6720
         public void Configure_LoadsCertificateStoreCertificateCredentialFromConfiguration()
         {
             try
