@@ -79,6 +79,11 @@
       <_TargetFrameworks Include="$(TargetFrameworks);$(TargetFramework)" />
     </ItemGroup>
 
+    <PropertyGroup>
+      <IsWindowsHelixQueue>false</IsWindowsHelixQueue>
+      <IsWindowsHelixQueue Condition="$(HelixTargetQueue.Contains('Windows')">true</IsWindowsHelixQueue>
+    </PropertyGroup>
+     
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="_CreateHelixPayloadInner"
              Properties="TargetFramework=%(_TargetFrameworks.Identity)">
@@ -100,7 +105,7 @@
 
   <Target Name="_CreateHelixPayloadInner" 
     DependsOnTargets="Publish;CollectXunitConsoleRunner" 
-    Condition="'$(BuildHelixPayload)' == 'true' AND ($(HelixTargetQueue.Contains('Windows')) OR '$(TargetFrameworkIdentifier)' != '.NETFramework')" 
+    Condition="'$(BuildHelixPayload)' == 'true' AND ($(IsWindowsHelixQueue) OR '$(TargetFrameworkIdentifier)' != '.NETFramework')" 
     Returns="@(HelixPayload)">
 
     <ConvertToAbsolutePath Paths="$(PublishDir)">
@@ -108,17 +113,17 @@
     </ConvertToAbsolutePath>
 
     <!-- Windows NetCore -->
-    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework' AND $(HelixTargetQueue.Contains('Windows'))" >
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework' AND $(IsWindowsHelixQueue)" >
         <_CopyItems Include="$(MSBuildThisFileDirectory)test\vstest\runtests.cmd" />
     </ItemGroup>
 
     <!-- Windows NetFramework -->
-    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' AND $(HelixTargetQueue.Contains('Windows'))" >
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' AND $(IsWindowsHelixQueue)" >
         <_CopyItems Include="$(MSBuildThisFileDirectory)test\xunit\runtests.cmd" />
     </ItemGroup>
 
     <!-- NonWindows -->
-    <ItemGroup Condition="!$(HelixTargetQueue.Contains('Windows'))"  >
+    <ItemGroup Condition="!$(IsWindowsHelixQueue)"  >
         <_CopyItems Include="$(MSBuildThisFileDirectory)test\vstest\runtests.sh" />
     </ItemGroup>
 
@@ -128,8 +133,8 @@
       <HelixPayload Include="$(PublishAbsoluteDir)">
         <TestAssembly>$(TargetFileName)</TestAssembly>
         <TestName>$(MSBuildProjectName)-$(TargetFramework)</TestName>
-        <Command Condition="$(HelixTargetQueue.Contains('Windows'))">runtests.cmd $(TargetFileName) $(NETCoreSdkVersion) $(MicrosoftNETCoreAppPackageVersion)</Command>
-        <Command Condition="!$(HelixTargetQueue.Contains('Windows'))">./runtests.sh $(TargetFileName) $(NETCoreSdkVersion) $(MicrosoftNETCoreAppPackageVersion)</Command>
+        <Command Condition="$(IsWindowsHelixQueue)">runtests.cmd $(TargetFileName) $(NETCoreSdkVersion) $(MicrosoftNETCoreAppPackageVersion)</Command>
+        <Command Condition="!$(IsWindowsHelixQueue)">./runtests.sh $(TargetFileName) $(NETCoreSdkVersion) $(MicrosoftNETCoreAppPackageVersion)</Command>
         <TestTimeout>00:30:00</TestTimeout>
       </HelixPayload>
     </ItemGroup>
