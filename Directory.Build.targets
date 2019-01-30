@@ -80,8 +80,7 @@
     </ItemGroup>
 
     <PropertyGroup>
-      <IsWindowsHelixQueue>false</IsWindowsHelixQueue>
-      <IsWindowsHelixQueue Condition="$(HelixTargetQueue.Contains('Windows')">true</IsWindowsHelixQueue>
+      <IsWindowsHelixQueue>$(HelixTargetQueue.Contains('Windows'))</IsWindowsHelixQueue>
     </PropertyGroup>
      
     <MSBuild Projects="$(MSBuildProjectFullPath)"
