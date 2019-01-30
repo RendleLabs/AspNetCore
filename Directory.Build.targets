@@ -118,7 +118,7 @@
     </ItemGroup>
 
     <!-- NonWindows -->
-    <ItemGroup Condition="$(HelixTargetQueue.Contains('Windows'))"  >
+    <ItemGroup Condition="!$(HelixTargetQueue.Contains('Windows'))"  >
         <_CopyItems Include="$(MSBuildThisFileDirectory)test\vstest\runtests.sh" />
     </ItemGroup>
 
@@ -128,7 +128,6 @@
       <HelixPayload Include="$(PublishAbsoluteDir)">
         <TestAssembly>$(TargetFileName)</TestAssembly>
         <TestName>$(MSBuildProjectName)-$(TargetFramework)</TestName>
-        <!-- Look into how to be able to use $(NETCoreSdkVersion) -->
         <Command Condition="$(HelixTargetQueue.Contains('Windows'))">runtests.cmd $(TargetFileName) $(NETCoreSdkVersion) $(MicrosoftNETCoreAppPackageVersion)</Command>
         <Command Condition="!$(HelixTargetQueue.Contains('Windows'))">./runtests.sh $(TargetFileName) $(NETCoreSdkVersion) $(MicrosoftNETCoreAppPackageVersion)</Command>
         <TestTimeout>00:30:00</TestTimeout>
